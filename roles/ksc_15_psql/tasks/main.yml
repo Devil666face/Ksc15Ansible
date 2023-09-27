@@ -1,0 +1,26 @@
+---
+- name: copy klnagent.deb
+  copy:
+    src: "./{{klnagent_file_name}}"
+    dest: /tmp/
+
+- name: render autoanswer template
+  template:
+    src: ./autoanswers.conf
+    dest: /tmp/autoanswers.conf
+
+- name: install klnagent.deb
+  apt:
+    deb: "/tmp/{{klnagent_file_name}}"
+
+- name: exec postinstall
+  shell: "/opt/kaspersky/klnagent*/lib/bin/setup/postinstall.pl"
+  environment:
+    KLAUTOANSWERS: /tmp/autoanswers.conf
+
+- name: check klnagchk
+  shell: "/opt/kaspersky/klnagent*/bin/klnagchk"
+  ignore_errors: true
+  register: klnagchk
+
+- debug: var="klnagchk.stdout_lines + [ klnagchk.stderr ]"
