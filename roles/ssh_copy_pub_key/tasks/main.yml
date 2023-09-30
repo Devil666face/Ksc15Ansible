@@ -1,5 +1,5 @@
 ---
-- name: key
-  authorized_key:
+- name: Add key
+  ansible.posix.authorized_key:
     user: "{{ansible_ssh_user}}"
     key: "{{lookup('file', ssh_pub_key)}}"

@@ -1,0 +1,6 @@
+---
+- name: Add apt repository
+  ansible.builtin.apt_repository:
+    repo: "{{repo}}"
+    state: present
+    filename: locals

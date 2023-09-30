@@ -1,0 +1,10 @@
+---
+# - name: Upgrade all packages
+#   apt:
+#     upgrade: yes
+
+- name: Install mariadb-client
+  apt:
+    name: 
+      - mariadb-client
+    state: present

@@ -1,12 +1,43 @@
 ---
-- name: Install klnagent
+- name: Copy pub key and add repos
   hosts: 
     - all
   become: yes
   gather_facts: yes
-
   roles:
-    - ssh_copy_pub_key
-
+    - role: ssh_copy_pub_key
+    - role: apt
+    # - role: apt_add_repository
+    #   vars:
+    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-base 1.7_x86-64 main contrib non-free"
+    # - role: apt_add_repository
+    #   vars:
+    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-main 1.7_x86-64 main contrib non-free"
+    # - role: apt_add_repository
+    #   vars:
+    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-update 1.7_x86-64 main contrib non-free"
+    # - role: apt_add_repository
+    #   vars:
+    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-extended 1.7_x86-64 main contrib non-free"
   vars:
     ssh_pub_key: "~/.ssh/id_rsa.pub"
+
+- name: Configure mariadb server
+  hosts:
+    - mdb
+  become: yes
+  gather_facts: yes
+  roles:
+    - role: mariadb_install
+    - role: mariadb_set_priveleges
+        
+  vars:
+    mdb_base_size: "5G"
+
+- name: Configure ksc server
+  hosts:
+    - ksc
+  become: yes
+  gather_facts: yes
+  roles:
+    - role: ksc_install
