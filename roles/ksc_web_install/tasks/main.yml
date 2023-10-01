@@ -1,0 +1,27 @@
+- name: Install requirements
+  apt:
+    name: 
+      - xz-utils
+    state: present
+
+- name: Copy klserver.cer
+  copy:
+    src: "/tmp/ksc/var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer"
+    dest: /etc/
+
+- name: Create ksc-web-console-setup.json file
+  template:
+    src: ./ksc-web-console-setup.json
+    dest: /etc/ksc-web-console-setup.json
+  vars:
+    ksc_ip: "{{hostvars[ 'ksc' ].ansible_default_ipv4.address}}"
+    web_ip: "{{hostvars[ 'web' ].ansible_default_ipv4.address}}"
+
+- name: Copy web console deb file
+  copy:
+    src: "./{{ksc_web_file_name}}"
+    dest: /tmp/
+
+- name: Install deb file
+  apt:
+    deb: "/tmp/{{ksc_web_file_name}}"

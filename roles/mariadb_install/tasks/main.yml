@@ -9,8 +9,8 @@
 
 - name: Set config
   template:
-    src: ./my.cnf
-    dest: /etc/mysql/my.cnf
+    src: ./mariadb.cnf
+    dest: /etc/mysql/mariadb.cnf
   vars:
     mdb_ip: "{{hostvars[ 'mdb' ].ansible_default_ipv4.address}}"
 

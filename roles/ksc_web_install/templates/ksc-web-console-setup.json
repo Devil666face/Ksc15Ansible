@@ -1,0 +1,6 @@
+{
+  "address": "{{web_ip}}",
+  "port": 8080,
+  "trusted": "{{ksc_ip}}|13299|/etc/klserver.cer|{{web_server_name}}",
+  "acceptEula": true
+}
