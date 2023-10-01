@@ -1,6 +1,6 @@
 .PHONY: playbook
 playbook: ping ## Deploy playbook
-	./venv/bin/ansible-playbook playbook.yml --extra-vars @.vars.yml -vv
+	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv
 
 .PHONY: init
 init: ## Init ansible install with venv
@@ -10,7 +10,7 @@ init: ## Init ansible install with venv
 
 .PHONY: ping
 ping: ## Ping all hosts
-	./venv/bin/ansible all -m ping
+	ansible all -m ping
 
 .PHONY: help
 help: ## Prints help for targets with comments

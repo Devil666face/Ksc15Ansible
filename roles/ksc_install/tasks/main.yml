@@ -38,20 +38,20 @@
 - name: Allow connects from mmc console
   shell: '/opt/kaspersky/ksc64/sbin/klscflag -ssvset -pv klserver -s 87 -n KLSRV_SP_SERVER_SSL_PORT_GUI_OPEN -sv true -svt BOOL_T -ss "|ss_type = \"SS_SETTINGS\";"'
 
-# - name: Restart kladminserver_srv
-#   systemd:
-#     name: kladminserver_srv
-#     state: restarted
-
-- name: Wait before ksc server up
-  ansible.builtin.wait_for:
-    port: 13000
-    delay: 10
+- name: Restart kladminserver_srv
+  systemd:
+    name: kladminserver_srv
+    state: restarted
 
 - name: Get klserver.cer
   fetch:
     src: /var/opt/kaspersky/klnagent_srv/1093/cert/klserver.cer
     dest: /tmp/
+
+- name: Wait before ksc server up
+  ansible.builtin.wait_for:
+    port: 13000
+    delay: 40
 
 - name: Create user for web
   shell: "/opt/kaspersky/ksc64/sbin/kladduser -n ksc -p {{ksc_web_password}}"
