@@ -2,6 +2,10 @@
 playbook: ping ## Deploy playbook
 	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv
 
+.PHONY: playbook-k
+playbook-k: ping ## Deploy playbook
+	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv -K
+
 .PHONY: init
 init: ## Init ansible install with venv
 	sudo apt update -y && sudo apt-get install sshpass -y

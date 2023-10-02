@@ -6,7 +6,7 @@
   gather_facts: yes
   roles:
     - role: ssh_copy_pub_key
-    # - role: apt
+    - role: apt
     # - role: apt_add_repository
     #   vars:
     #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-base 1.7_x86-64 main contrib non-free"
@@ -19,6 +19,13 @@
     # - role: apt_add_repository
     #   vars:
     #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-extended 1.7_x86-64 main contrib non-free"
+    - role: apt_add_repository
+      vars:
+        repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/debian/ buster main contrib non-free"
+    - role: apt_add_repository
+      vars:
+        repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/debian/ bullseye main contrib non-free"
+
   vars:
     ssh_pub_key: "~/.ssh/id_rsa.pub"
 
