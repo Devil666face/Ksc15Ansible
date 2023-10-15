@@ -1,7 +1,7 @@
 ---
 - name: Install mariadb-client
   apt:
-    name: 
+    name:
       - mariadb-client
     state: present
 
@@ -55,6 +55,4 @@
 
 - name: Create user for web
   shell: "/opt/kaspersky/ksc64/sbin/kladduser -n ksc -p {{ksc_web_password}}"
-  ignore_errors: yes 
-
-
+  ignore_errors: yes

@@ -1,6 +1,6 @@
 - name: Install requirements
   apt:
-    name: 
+    name:
       - xz-utils
     state: present
 

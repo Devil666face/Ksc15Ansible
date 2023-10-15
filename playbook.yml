@@ -1,6 +1,6 @@
 ---
 - name: Copy pub key and add repos
-  hosts: 
+  hosts:
     - all
   become: yes
   gather_facts: yes

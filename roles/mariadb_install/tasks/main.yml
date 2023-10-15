@@ -1,7 +1,7 @@
 ---
 - name: Install mariadb-server-10.3
   apt:
-    name: 
+    name:
       - mariadb-server-10.3
       - python3-mysqldb
       - python-mysqldb
@@ -14,7 +14,7 @@
   vars:
     mdb_ip: "{{hostvars[ 'mdb' ].ansible_default_ipv4.address}}"
 
-- name: Set the root password 
+- name: Set the root password
   community.mysql.mysql_user: login_user=root login_password="{{ mysql_root_password }}" user=root password="{{ mysql_root_password }}"
 
 - name: Secure the root user for IPV4 localhost (127.0.0.1)
