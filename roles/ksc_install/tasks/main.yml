@@ -1,8 +1,8 @@
 ---
-- name: Install mariadb-client
+- name: Install db client
   apt:
     name:
-      - mariadb-client
+      - "{{ 'mariadb-client' if db_type=='mysql' else 'postgresql-client' }}"
     state: present
 
 - name: Create group kladmins
@@ -27,7 +27,8 @@
     dest: /tmp/answers.txt
   vars:
     ksc_ip: "{{hostvars[ 'ksc' ].ansible_default_ipv4.address}}"
-    mdb_ip: "{{hostvars[ 'mdb' ].ansible_default_ipv4.address}}"
+    mdb_ip: "{{hostvars[ 'mdb' ].ansible_default_ipv4.address if db_type=='mysql' else hostvars[ 'psql' ].ansible_default_ipv4.address}}"
+    db_port: "{{ '3306' if db_type=='mysql' else '5432' }}"
 
 - name: Install deb file
   apt:

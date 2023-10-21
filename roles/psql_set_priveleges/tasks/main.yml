@@ -1,0 +1,26 @@
+---
+- name: Create ksc user in psql
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: ksc
+    password: "{{ ksc_db_password }}"
+
+- name: Create database kav in psql
+  become: true
+  become_user: postgres
+  postgresql_db:
+    name: KAV
+    state: present
+    encoding: UTF8
+    template: template0
+
+- name: Grant all privileges to base kav
+  become: true
+  become_user: postgres
+  postgresql_privs:
+    db: KAV
+    privs: ALL
+    type: database
+    objs: ""
+    role: ksc

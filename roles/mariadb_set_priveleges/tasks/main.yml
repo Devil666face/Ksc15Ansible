@@ -1,11 +1,11 @@
 ---
 - name: Create ksc user
-  # mysql_user: login_user=root login_password="{{ mysql_root_password }}" user=ksc password="{{ ksc_mysql_password }}" host="{{ ksc_ip }}"
+  # mysql_user: login_user=root login_password="{{ db_root_password }}" user=ksc password="{{ ksc_db_password }}" host="{{ ksc_ip }}"
   community.mysql.mysql_user:
     login_user: root
-    login_password: "{{ mysql_root_password }}"
+    login_password: "{{ db_root_password }}"
     name: ksc
-    password: "{{ ksc_mysql_password }}"
+    password: "{{ ksc_db_password }}"
     host: "{{ ksc_ip }}"
   vars:
     ksc_ip: "{{ hostvars[ 'ksc' ].ansible_default_ipv4.address }}"
@@ -13,10 +13,10 @@
 - name: Set priveleges for ksc user
   community.mysql.mysql_query:
     login_user: root
-    login_password: "{{ mysql_root_password }}"
+    login_password: "{{ db_root_password }}"
     query:
       - GRANT USAGE ON *.* TO {{user}}
-      - GRANT ALL ON kav.* TO {{user}}
+      - GRANT ALL ON KAV.* TO {{user}}
       - GRANT SELECT, SHOW VIEW ON mysql.* TO {{user}}
       - GRANT SELECT, SHOW VIEW ON sys.* TO {{user}}
       - GRANT PROCESS ON *.* TO {{user}}
@@ -26,14 +26,14 @@
   vars:
     user: "'ksc'@'{{ hostvars[ 'ksc' ].ansible_default_ipv4.address }}'"
 
-- name: Create kav database
+- name: Create KAV database
   community.mysql.mysql_db:
     login_user: root
-    login_password: "{{ mysql_root_password }}"
+    login_password: "{{ db_root_password }}"
     name:
-      - kav
+      - KAV
 # - name: Secure the root user for IPV6 localhost (::1)
-#   mysql_user: login_user=root login_password="{{ mysql_root_password }}" user=root password="{{ mysql_root_password }}" host="::1"
+#   mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}" host="::1"
 
 # - name: Secure the root user for server_hostname domain
-#   mysql_user: login_user=root login_password="{{ mysql_root_password }}" user=root password="{{ mysql_root_password }}" host="{{ ansible_fqdn }}"
+#   mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}" host="{{ ansible_fqdn }}"

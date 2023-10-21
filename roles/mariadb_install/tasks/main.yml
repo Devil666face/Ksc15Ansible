@@ -15,19 +15,19 @@
     mdb_ip: "{{hostvars[ 'mdb' ].ansible_default_ipv4.address}}"
 
 - name: Set the root password
-  community.mysql.mysql_user: login_user=root login_password="{{ mysql_root_password }}" user=root password="{{ mysql_root_password }}"
+  community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}"
 
 - name: Secure the root user for IPV4 localhost (127.0.0.1)
-  community.mysql.mysql_user: login_user=root login_password="{{ mysql_root_password }}" user=root password="{{ mysql_root_password }}" host="127.0.0.1"
+  community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}" host="127.0.0.1"
 
 - name: Secure the root user for localhost domain
-  community.mysql.mysql_user: login_user=root login_password="{{ mysql_root_password }}" user=root password="{{ mysql_root_password }}" host="localhost"
+  community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}" host="localhost"
 
 - name: Deletes anonymous server user
-  community.mysql.mysql_user: login_user=root login_password="{{ mysql_root_password }}" user="" host_all=yes state=absent
+  community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user="" host_all=yes state=absent
 
 - name: Removes the test database
-  community.mysql.mysql_db: login_user=root login_password="{{ mysql_root_password }}" db=test state=absent
+  community.mysql.mysql_db: login_user=root login_password="{{ db_root_password }}" db=test state=absent
 
 - name: Restart mariadb
   systemd:

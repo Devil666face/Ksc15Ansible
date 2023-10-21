@@ -1,0 +1,31 @@
+- name: Install requirements
+  apt:
+    name:
+      - nginx
+    state: present
+
+- name: Delete default config
+  ansible.builtin.file:
+    state: absent
+    path: /etc/nginx/sites-available/default
+
+- name: Delete default config
+  ansible.builtin.file:
+    state: absent
+    path: /etc/nginx/sites-enabled/default
+
+- name: Render config for redirect
+  template:
+    src: ./ksc.conf
+    dest: /etc/nginx/sites-available/ksc.conf
+
+- name: Create symbolic link
+  file:
+    src: /etc/nginx/sites-available/ksc.conf
+    dest: /etc/nginx/sites-enabled/ksc.conf
+    state: link
+
+- name: Reload nginx
+  systemd:
+    name: nginx
+    state: reloaded

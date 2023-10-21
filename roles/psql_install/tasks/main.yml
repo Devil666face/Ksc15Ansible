@@ -1,0 +1,61 @@
+---
+- name: Install postgresql-14
+  apt:
+    name:
+      - postgresql-14
+      - python-psycopg2
+    state: present
+
+- name:
+  shell: |
+    expr $(ulimit -s) - 1024
+  register: max_stack_depth
+
+- name:
+  shell: |
+    grep 'MemTota' /proc/meminfo | grep -o '[[:digit:]]*'
+  register: shared_buffers
+
+- name: set fact
+  set_fact:
+    max_stack_depth: "{{ max_stack_depth.stdout }}"
+    shared_buffers: "{{ shared_buffers.stdout }}"
+
+- name: Set postgresql.conf
+  template:
+    src: ./postgresql.conf
+    dest: /etc/postgresql/14/main/conf.d/ksc.conf
+  vars:
+    psql_ip: "{{ ansible_default_ipv4.address }}"
+
+- name: Set pg_hba.conf
+  template:
+    src: ./pg_hba.conf
+    dest: /etc/postgresql/14/main
+  vars:
+    ksc_ip: "{{ hostvars[ 'ksc' ].ansible_default_ipv4.address }}"
+# - name: Set config
+#   template:
+#     src: ./mariadb.cnf
+#     dest: /etc/mysql/mariadb.cnf
+#   vars:
+#     mdb_ip: "{{hostvars[ 'mdb' ].ansible_default_ipv4.address}}"
+# - name: Set the root password
+#   community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}"
+
+# - name: Secure the root user for IPV4 localhost (127.0.0.1)
+#   community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}" host="127.0.0.1"
+
+# - name: Secure the root user for localhost domain
+#   community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user=root password="{{ db_root_password }}" host="localhost"
+
+# - name: Deletes anonymous server user
+#   community.mysql.mysql_user: login_user=root login_password="{{ db_root_password }}" user="" host_all=yes state=absent
+
+# - name: Removes the test database
+#   community.mysql.mysql_db: login_user=root login_password="{{ db_root_password }}" db=test state=absent
+
+- name: Restart postgresql
+  systemd:
+    name: postgresql
+    state: restarted

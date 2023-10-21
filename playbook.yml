@@ -6,39 +6,41 @@
   gather_facts: yes
   roles:
     - role: ssh_copy_pub_key
+    - role: apt_add_repository
+      vars:
+        repo: "deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-base/             1.7_x86-64 main contrib non-free"
+    - role: apt_add_repository
+      vars:
+        repo: "deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/repository-extended/         1.7_x86-64 main contrib non-free astra-ce"
+    - role: apt_add_repository
+      vars:
+        repo: "deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/uu/last/repository-base/     1.7_x86-64 main contrib non-free"
+    - role: apt_add_repository
+      vars:
+        repo: "deb https://dl.astralinux.ru/astra/stable/1.7_x86-64/uu/last/repository-extended/ 1.7_x86-64 main contrib non-free astra-ce"
     - role: apt
-    # - role: apt_add_repository
-    #   vars:
-    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-base 1.7_x86-64 main contrib non-free"
-    # - role: apt_add_repository
-    #   vars:
-    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-main 1.7_x86-64 main contrib non-free"
-    # - role: apt_add_repository
-    #   vars:
-    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-update 1.7_x86-64 main contrib non-free"
-    # - role: apt_add_repository
-    #   vars:
-    #     repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/astra/stable/1.7_x86-64/repository-extended 1.7_x86-64 main contrib non-free"
-    - role: apt_add_repository
-      vars:
-        repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/debian/ buster main contrib non-free"
-    - role: apt_add_repository
-      vars:
-        repo: "deb [arch=amd64, trusted=yes] http://10.148.2.25:80/debian/ bullseye main contrib non-free"
-
   vars:
     ssh_pub_key: "~/.ssh/id_rsa.pub"
 
-- name: Configure mariadb server
+- name: Configure postgresql server
   hosts:
-    - mdb
+    - psql
   become: yes
   gather_facts: yes
   roles:
-    - role: mariadb_install
-    - role: mariadb_set_priveleges
-  vars:
-    mdb_base_size: "5G"
+    - role: psql_install
+    - role: psql_set_priveleges
+
+# - name: Configure mariadb server
+#   hosts:
+#     - mdb
+#   become: yes
+#   gather_facts: yes
+#   roles:
+#     - role: mariadb_install
+#     - role: mariadb_set_priveleges
+#   vars:
+#     mdb_base_size: "5G"
 
 - name: Configure ksc server
   hosts:
@@ -49,6 +51,8 @@
     - role: ksc_install
   vars:
     ksc_file_name: "ksc64_15.0.0-12912_amd64.deb"
+    db_type: "postgres"
+    # db_type: "mysql"
 
 - name: Configure ksc web
   hosts:
@@ -57,14 +61,14 @@
   gather_facts: yes
   roles:
     - role: ksc_web_install
+    - role: nginx_for_web
   vars:
     web_server_name: "Ksc 15 server"
     ksc_web_file_name: "ksc-web-console-15.0.136.x86_64.deb"
-
-- name: Reboot all
-  hosts:
-    - all
-  become: yes
-  gather_facts: yes
-  roles:
-    - role: reboot
+# - name: Reboot all
+#   hosts:
+#     - all
+#   become: yes
+#   gather_facts: yes
+#   roles:
+#     - role: reboot
