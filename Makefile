@@ -1,3 +1,9 @@
+PACKAGES="python3-apt"
+PACK_LIST=$(shell apt-cache depends --recurse --no-recommends --no-suggests \
+	  --no-conflicts --no-breaks --no-replaces --no-enhances \
+	  --no-pre-depends $(PACKAGES) | grep "^\w")
+.DEFAULT_GOAL := help
+
 .PHONY: playbook
 playbook: ping ## Deploy playbook
 	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv
@@ -9,8 +15,21 @@ playbook-k: ping ## Deploy playbook
 .PHONY: init
 init: ## Init ansible install with venv
 	sudo apt update -y && sudo apt-get install sshpass -y
-	python3 -m venv venv
-	./venv/bin/pip install --no-index --find-links pkg ansible
+	tar -xf .dev/python-3.10.8-debian10.tgz
+	tar -xf .dev/pkg.tgz
+	./python/bin/python3.10 -m venv venv
+	./venv/bin/pip install --no-index --find-links pkg -r requirements.txt
+	rm -r pkg
+
+.PHONY: pack
+pack:
+	mkdir pkg deb
+	./venv/bin/pip freeze > requirements.txt
+	./venv/bin/pip download -d pkg -r requirements.txt
+	tar -cvzf .dev/pkg.tgz pkg
+	cd deb && apt-get download $(PACK_LIST) && cd ..
+	tar -cvzf .dev/deb.tgz deb
+	rm -r pkg deb
 
 .PHONY: ping
 ping: ## Ping all hosts
