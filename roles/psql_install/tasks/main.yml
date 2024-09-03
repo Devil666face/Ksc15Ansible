@@ -2,8 +2,8 @@
 - name: Install postgresql-14
   apt:
     name:
+      - python3-psycopg2
       - postgresql-14
-      - python-psycopg2
     state: present
 
 - name:
