@@ -1,5 +1,18 @@
-For clone use
+## Init
 
 ```bash
-bash -c "$(wget https://raw.githubusercontent.com/Devil666face/Ksc15Ansible/main/git-clone -O -)"
+cp inventory.ini.sample inventory.ini
+cp .vars.yml.sample .vars.yml
+```
+
+## Help
+
+```bash
+make help
+```
+
+## Install
+
+```bash
+make playbook
 ```
