@@ -4,15 +4,24 @@ PACK_LIST=$(shell apt-cache depends --recurse --no-recommends --no-suggests \
 	  --no-pre-depends $(PACKAGES) | grep "^\w")
 .DEFAULT_GOAL := help
 
-.PHONY: playbook
 playbook: ping ## Deploy playbook
-	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv
+	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv \
+		--tags "preinstall" \
+		--tags "psql" \
+		--tags "ksc" \
+		--tags "web" 
 
-.PHONY: playbook-k
 playbook-k: ping ## Deploy playbook
-	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv -K
+	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv -K \
+		--tags "preinstall" \
+		--tags "psql" \
+		--tags "ksc" \
+		--tags "web" 
 
-.PHONY: init
+playbook-web: ping ## Deploy web
+	ansible-playbook playbook.yml --extra-vars @.vars.yml -vv \
+		--tags "web" 
+
 init: ## Init ansible install with venv
 	sudo apt update -y && sudo apt-get install sshpass -y
 	tar -xf .dev/python-3.10.8-debian10.tgz
@@ -21,7 +30,6 @@ init: ## Init ansible install with venv
 	./venv/bin/pip install --no-index --find-links pkg -r requirements.txt
 	rm -r pkg
 
-.PHONY: pack
 pack:
 	mkdir pkg deb
 	./venv/bin/pip freeze > requirements.txt
@@ -31,10 +39,8 @@ pack:
 	tar -cvzf .dev/deb.tgz deb
 	rm -r pkg deb
 
-.PHONY: ping
 ping: ## Ping all hosts
 	ansible all -m ping
 
-.PHONY: help
 help: ## Prints help for targets with comments
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

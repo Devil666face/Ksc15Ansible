@@ -1,9 +1,11 @@
 ---
 - name: Copy pub key and add repos
+  tags:
+    - preinstall
   hosts:
     - all
-  become: yes
-  gather_facts: yes
+  become: true
+  gather_facts: true
   roles:
     - role: ssh_copy_pub_key
     - role: apt_add_repository
@@ -23,19 +25,23 @@
     ssh_pub_key: "~/.ssh/id_rsa.pub"
 
 - name: Configure postgresql server
+  tags:
+    - psql
   hosts:
     - psql
-  become: yes
-  gather_facts: yes
+  become: true
+  gather_facts: true
   roles:
     - role: psql_install
     - role: psql_set_priveleges
 
 # - name: Configure mariadb server
+#   tags:
+#     - mdb
 #   hosts:
 #     - mdb
-#   become: yes
-#   gather_facts: yes
+#   become: true
+#   gather_facts: true
 #   roles:
 #     - role: mariadb_install
 #     - role: mariadb_set_priveleges
@@ -43,10 +49,12 @@
 #     mdb_base_size: "5G"
 
 - name: Configure ksc server
+  tags:
+    - ksc
   hosts:
     - ksc
-  become: yes
-  gather_facts: yes
+  become: true
+  gather_facts: true
   roles:
     - role: ksc_install
   vars:
@@ -55,20 +63,25 @@
     # db_type: "mysql"
 
 - name: Configure ksc web
+  tags:
+    - web
   hosts:
     - web
-  become: yes
-  gather_facts: yes
+  become: true
+  gather_facts: true
   roles:
-    - role: ksc_web_install
-    - role: nginx_for_web
+    # - role: ksc_web_install
+    - role: socat_redirect
   vars:
     web_server_name: "Ksc 15 server"
     ksc_web_file_name: "ksc-web-console-15.0.136.x86_64.deb"
-# - name: Reboot all
-#   hosts:
-#     - all
-#   become: yes
-#   gather_facts: yes
-#   roles:
-#     - role: reboot
+
+- name: Reboot all
+  tags:
+    - reboot
+  hosts:
+    - all
+  become: true
+  gather_facts: true
+  roles:
+    - role: reboot

@@ -5,12 +5,12 @@
     state: present
 
 - name: Delete default config
-  ansible.builtin.file:
+  file:
     state: absent
     path: /etc/nginx/sites-available/default
 
 - name: Delete default config
-  ansible.builtin.file:
+  file:
     state: absent
     path: /etc/nginx/sites-enabled/default
 

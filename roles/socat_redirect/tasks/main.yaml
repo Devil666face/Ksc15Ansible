@@ -1,0 +1,31 @@
+- name: Install requirements
+  apt:
+    name:
+      - socat
+    state: present
+
+- name: Ensure the target /opt/kaspersky_web_redirect exists
+  file:
+    path: "/opt/kaspersky_web_redirect"
+    state: directory
+    mode: "0755"
+
+- name: Render config for redirect
+  vars:
+    listen_ip: "{{hostvars[ 'web' ].ansible_default_ipv4.address}}"
+  template:
+    src: ./kaspersky_web_redirect.service
+    dest: /opt/kaspersky_web_redirect/kaspersky_web_redirect.service
+
+- name: Create symbolic link
+  file:
+    src: /opt/kaspersky_web_redirect/kaspersky_web_redirect.service
+    dest: /etc/systemd/system/kaspersky_web_redirect.service
+    state: link
+
+- name: Ensure the service is enabled and started
+  systemd:
+    daemon_reload: true
+    name: kaspersky_web_redirect.service
+    enabled: yes
+    state: restarted
